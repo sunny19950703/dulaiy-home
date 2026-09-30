@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>度拉家居 · 3D 户型体验（示例）</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#2b2520;background:#efe9df;-webkit-user-select:none;user-select:none}
+#app{display:grid;grid-template-rows:64px 1fr;grid-template-columns:268px 1fr;height:100%}
+header{grid-column:1/3;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#2f2621;color:#f3e7d3}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand b{font-size:20px;letter-spacing:6px;font-weight:600}
+.brand span{font-size:14px;color:#d9b77e}
+.brand em{font-style:normal;font-size:12px;color:#2f2621;background:#c9a063;border-radius:10px;padding:2px 9px}
+.views{display:flex;background:#463a33;border-radius:22px;padding:4px}
+.views button{border:0;background:transparent;color:#e6d6bb;font:inherit;font-size:15px;padding:8px 18px;border-radius:18px;cursor:pointer}
+.views button.on{background:#f3e7d3;color:#2f2621;font-weight:600}
+aside{background:#faf6ef;border-right:1px solid #e3d6bf;overflow-y:auto;padding:16px 16px 24px}
+aside h3{font-size:14px;color:#8a6d45;margin:18px 0 10px;letter-spacing:1px}
+aside h3:first-child{margin-top:4px}
+.tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.tools button,.lib button,.act button{border:1px solid #e3d6bf;background:#fff;border-radius:10px;font:inherit;font-size:13px;color:#3a2f28;cursor:pointer;padding:9px 4px}
+.tools button.on{background:#2f2621;color:#f3e7d3;border-color:#2f2621}
+.lib{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lib button{text-align:left;padding:9px 10px}
+.lib button i{font-style:normal;display:inline-block;width:22px}
+.mats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.mat{cursor:pointer;text-align:center;font-size:11px;color:#6b5236}
+.mat div{height:40px;border-radius:8px;border:2px solid transparent;background-size:cover;margin-bottom:4px}
+.mat.on div{border-color:#b0762a;box-shadow:0 0 0 2px #fff inset}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.upload{width:100%;margin-top:4px;border:1px dashed #c9a063!important;color:#8a5f2a!important;background:#fbf3e4!important}
+.note{font-size:12px;color:#8a7a66;line-height:1.6;margin-top:8px}
+#removed{font-size:12.5px;color:#a0442f;line-height:1.7;margin-top:6px}
+#stage{position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#labels{position:absolute;inset:0;pointer-events:none}
+.rl{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;color:#3a2f28;text-shadow:0 0 3px #fff,0 0 6px #fff;transition:opacity .3s}
+.rl b{display:block;font-size:15px}
+.rl small{font-size:12px;color:#7a6a55}
+.dim{position:absolute;transform:translate(-50%,-50%);font-size:13px;color:#8a5f2a;background:#efe9df;padding:0 6px}
+.ml{position:absolute;transform:translate(-50%,-130%);font-size:13px;color:#fff;background:#b0442f;border-radius:6px;padding:2px 8px}
+#hint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(47,38,33,.86);color:#f3e7d3;font-size:14px;padding:9px 18px;border-radius:20px;white-space:nowrap;pointer-events:none}
+#legend{position:absolute;right:16px;bottom:16px;background:rgba(255,255,255,.9);border-radius:10px;padding:10px 14px;font-size:12.5px;line-height:1.9;color:#3a2f28}
+#legend span{display:inline-block;width:22px;height:6px;border-radius:2px;margin-right:8px;vertical-align:2px}
+#selbar{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:#fff;border-radius:22px;box-shadow:0 3px 14px rgba(0,0,0,.12);padding:6px 8px 6px 18px;display:none;align-items:center;gap:8px;font-size:14px}
+#selbar button{border:0;border-radius:16px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;background:#efe6d6;color:#3a2f28}
+#selbar button.del{background:#f6e0da;color:#a0442f}
+#toast{position:absolute;left:50%;top:70px;transform:translateX(-50%);background:#a0442f;color:#fff;border-radius:18px;padding:8px 18px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+#walkui{position:absolute;inset:0;pointer-events:none;display:none}
+#pad{position:absolute;left:24px;bottom:24px;width:150px;height:150px;pointer-events:auto}
+#pad button{position:absolute;width:50px;height:50px;border-radius:50%;border:0;background:rgba(47,38,33,.7);color:#fff;font-size:20px;cursor:pointer}
+#exitwalk{position:absolute;right:20px;top:14px;pointer-events:auto;border:0;border-radius:20px;background:#2f2621;color:#f3e7d3;font:inherit;font-size:14px;padding:9px 18px;cursor:pointer}
+#cross{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:rgba(255,255,255,.8)}
+@media (max-width:900px) and (orientation:portrait),(max-width:760px){
+ #app{grid-template-columns:1fr;grid-template-rows:56px 1fr 230px}
+ header{grid-column:1;padding:0 10px}
+ .brand span,.brand em{display:none}
+ .views button{padding:7px 10px;font-size:13px}
+ aside{grid-row:3;border-right:0;border-top:1px solid #e3d6bf;padding:10px}
+ #legend{display:none}
+ #hint{font-size:12px;white-space:normal;width:90%;text-align:center}
+}
+</style>
+</head>
+<body>
+<div id="app">
+ <header>
+  <div class="brand"><b>DULAIY</b><span>度拉家居 · 3D 户型体验</span><em>示例户型</em></div>
+  <div class="views">
+   <button data-v="2d" class="on">2D 平面</button><button data-v="3d">3D 俯瞰</button><button data-v="walk">进屋漫游</button>
+  </div>
+ </header>
+ <aside>
+  <h3>工具</h3>
+  <div class="tools">
+   <button data-t="select" class="on">摆家具</button><button data-t="wall">拆改墙体</button><button data-t="measure">测量</button>
+  </div>
+  <h3>家具库 · 点一下放进户型</h3>
+  <div class="lib" id="lib"></div>
+  <h3>地面材质 · 选好后点房间</h3>
+  <div class="mats" id="mats"></div>
+  <h3>方案</h3>
+  <div class="act">
+   <button id="reset">恢复原始户型</button><button id="clearm">清除测量</button>
+  </div>
+  <div id="removed"></div>
+  <button class="upload act" id="upload">＋ 上传业主户型图</button>
+  <div class="note">本页是一套约 180㎡ 的示例大平层。正式使用时，按业主提供的户型图尺寸还原，再和业主一起调整方案。</div>
+ </aside>
+ <div id="stage">
+  <canvas id="c"></canvas>
+  <div id="labels"></div>
+  <div id="legend"><div><span style="background:#3d342d"></span>承重墙（不可拆）</div><div><span style="background:#a39584"></span>非承重墙（可拆改）</div><div><span style="background:repeating-linear-gradient(90deg,#c0392b 0 4px,transparent 4px 7px)"></span>已拆除</div><div><span style="background:#9cc7e0"></span>落地窗</div></div>
+  <div id="selbar"><span id="selname">沙发</span><button id="rot">旋转 90°</button><button class="del" id="del">删除</button></div>
+  <div id="toast"></div>
+  <div id="hint"></div>
+  <div id="walkui"><div id="cross"></div><button id="exitwalk">退出漫游</button>
+   <div id="pad"><button data-k="f" style="left:50px;top:0">▲</button><button data-k="l" style="left:0;top:50px">◀</button><button data-k="r" style="left:100px;top:50px">▶</button><button data-k="b" style="left:50px;top:100px">▼</button></div>
+  </div>
+ </div>
+</div>
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script>
+// ---------------- 户型数据（单位：米，x 向东，z 向南，原点在西北角） ----------------
+const PW = 18, PD = 10, CX = PW / 2, CZ = PD / 2, WALL_H = 2.8, FLAT_H = 0.12;
+const ROOMS = [
+  {id:'living', name:'客厅', x0:0, z0:5, x1:7, z1:10, mat:'oak'},
+  {id:'dining', name:'餐厅', x0:7, z0:5, x1:11, z1:10, mat:'oak'},
+  {id:'bed2', name:'次卧', x0:0, z0:0, x1:4, z1:5, mat:'oak'},
+  {id:'study', name:'书房', x0:4, z0:0, x1:7.5, z1:5, mat:'oak'},
+  {id:'kitchen', name:'中西厨', x0:7.5, z0:0, x1:11, z1:5, mat:'tile'},
+  {id:'foyer', name:'玄关', x0:11, z0:0, x1:13.5, z1:3, mat:'marble'},
+  {id:'bath', name:'公卫', x0:13.5, z0:0, x1:15.5, z1:3, mat:'tile'},
+  {id:'closet', name:'衣帽间', x0:15.5, z0:0, x1:18, z1:3, mat:'oak'},
+  {id:'hall', name:'走廊', x0:11, z0:3, x1:18, z1:5, mat:'oak'},
+  {id:'master', name:'主卧', x0:11, z0:5, x1:18, z1:10, mat:'oak'},
+];
+// kind: outer 外墙 / bear 承重墙 / part 非承重墙 / glass 落地窗；group 相同的一起拆
+const WALLS = [
+  {a:[0,0], b:[11.7,0], kind:'outer'}, {a:[12.8,0], b:[18,0], kind:'outer'},
+  {a:[0,0], b:[0,10], kind:'outer'}, {a:[18,0], b:[18,10], kind:'outer'},
+  {a:[0,10], b:[18,10], kind:'glass'},
+  {a:[4,0], b:[4,5], kind:'bear'},
+  {a:[11,0], b:[11,3], kind:'bear'}, {a:[11,5], b:[11,10], kind:'bear'},
+  {a:[7.5,0], b:[7.5,5], kind:'part', group:'书房与厨房之间的墙'},
+  {a:[0,5], b:[2.8,5], kind:'part', group:'次卧与客厅之间的墙'}, {a:[3.7,5], b:[4,5], kind:'part', group:'次卧与客厅之间的墙'},
+  {a:[4,5], b:[4.3,5], kind:'part', group:'书房与客厅之间的墙'}, {a:[5.2,5], b:[7.5,5], kind:'part', group:'书房与客厅之间的墙'},
+  {a:[7.5,5], b:[9,5], kind:'part', group:'厨房与餐厅之间的墙'}, {a:[10.2,5], b:[11,5], kind:'part', group:'厨房与餐厅之间的墙'},
+  {a:[13.5,0], b:[13.5,3], kind:'part', group:'玄关与公卫之间的墙'},
+  {a:[15.5,0], b:[15.5,3], kind:'part', group:'公卫与衣帽间之间的墙'},
+  {a:[13.5,3], b:[14,3], kind:'part', group:'公卫门边墙'}, {a:[14.8,3], b:[15.5,3], kind:'part', group:'公卫门边墙'},
+  {a:[15.5,3], b:[16,3], kind:'part', group:'衣帽间门边墙'}, {a:[16.9,3], b:[18,3], kind:'part', group:'衣帽间门边墙'},
+  {a:[11,5], b:[12,5], kind:'part', group:'主卧与走廊之间的墙'}, {a:[13,5], b:[18,5], kind:'part', group:'主卧与走廊之间的墙'},
+];
+// 门：铰链点、门宽、开向（门扇沿墙方向 +1/-1，摆向 +1/-1）
+const DOORS = [
+  {h:[12.8,0], w:1.1, axis:'x', along:-1, swing:1},
+  {h:[3.7,5], w:0.9, axis:'x', along:-1, swing:-1},
+  {h:[5.2,5], w:0.9, axis:'x', along:-1, swing:-1},
+  {h:[14.8,3], w:0.8, axis:'x', along:-1, swing:-1},
+  {h:[16.9,3], w:0.9, axis:'x', along:-1, swing:-1},
+  {h:[13,5], w:1.0, axis:'x', along:-1, swing:1},
+];
+const START_FURN = [
+  ['tv', 3.5, 5.35, 0], ['sofa', 3.5, 8.6, Math.PI], ['coffee', 3.5, 7.05, 0], ['rug', 3.5, 7.3, 0], ['chair', 1.1, 7.1, Math.PI/2], ['plant', 6.4, 9.4, 0],
+  ['dining', 9, 7.6, 0], ['plant', 7.6, 9.4, 0],
+  ['bed', 14.5, 6.25, 0], ['wardrobe', 17.65, 7.5, -Math.PI/2],
+  ['bedS', 2, 1.15, 0], ['desk', 5.75, 0.55, 0], ['shelf', 7.25, 2.5, -Math.PI/2],
+  ['counter', 9.25, 0.35, 0], ['island', 9.25, 3.0, 0],
+  ['cabinet', 12.25, 0.3, 0], ['vanity', 14.5, 0.3, 0], ['wardrobe', 16.75, 0.35, 0],
+];
+
+// ---------------- 基础场景 ----------------
+const canvas = document.getElementById('c'), stage = document.getElementById('stage'), labelsEl = document.getElementById('labels');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#efe9df');
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 400);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.12; controls.screenSpacePanning = false;
+controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 6; controls.maxDistance = 90;
+
+scene.add(new THREE.HemisphereLight(0xfffaf2, 0xcdbda4, 0.55));
+const sun = new THREE.DirectionalLight(0xfff1dd, 0.62);
+sun.position.set(-6, 30, 9); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, {left:-14, right:14, top:12, bottom:-12, near:1, far:60});
+sun.shadow.bias = -0.0008; scene.add(sun);
+scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+const fill = new THREE.DirectionalLight(0xfff6ea, 0.32); fill.position.set(-14, 9, 18); scene.add(fill);
+
+const W = (x, z, y = 0) => new THREE.Vector3(x - CX, y, z - CZ);   // 平面坐标 → 场景坐标
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 60), new THREE.MeshStandardMaterial({color:'#e8e0d2', roughness:1}));
+ground.rotation.x = -Math.PI/2; ground.position.y = -0.02; ground.receiveShadow = true; scene.add(ground);
+// 南侧阳台
+const deck = new THREE.Mesh(new THREE.PlaneGeometry(18, 1.6), new THREE.MeshStandardMaterial({color:'#d8cfc1', roughness:.9}));
+deck.rotation.x = -Math.PI/2; deck.position.copy(W(9, 10.8, -0.005)); deck.receiveShadow = true; scene.add(deck);
+
+// ---------------- 地面材质（画布生成） ----------------
+function tex(draw) {
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); draw(g);
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
+}
+function rnd(s){ return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function planks(base, dark, seed) {
+  return g => { const r = rnd(seed); g.fillStyle = base; g.fillRect(0,0,512,512);
+    for (let row = 0; row < 8; row++) { let x = -r()*300;
+      while (x < 512) { const len = 180 + r()*220; const sh = (r()-.5)*28;
+        g.fillStyle = `rgba(${sh>0?255:0},${sh>0?240:0},${sh>0?220:0},${Math.abs(sh)/100})`; g.fillRect(x, row*64, len, 64);
+        g.strokeStyle = dark; g.globalAlpha = .18; for (let k = 0; k < 6; k++) { g.beginPath(); const y = row*64 + 6 + r()*52; g.moveTo(x, y); g.bezierCurveTo(x+len*.3, y+(r()-.5)*8, x+len*.6, y+(r()-.5)*8, x+len, y); g.stroke(); }
+        g.globalAlpha = .55; g.fillStyle = dark; g.fillRect(x, row*64, 2, 64); g.globalAlpha = 1; x += len; }
+      g.fillStyle = dark; g.globalAlpha = .5; g.fillRect(0, row*64, 512, 1.5); g.globalAlpha = 1; } };
+}
+const MATS = {
+  oak:   {name:'浅橡木', t: tex(planks('#d9bb92', '#8a6440', 7))},
+  walnut:{name:'胡桃木', t: tex(planks('#7b5337', '#3b2415', 11))},
+  marble:{name:'大理石', t: tex(g => { const r = rnd(3); g.fillStyle = '#f3f0ea'; g.fillRect(0,0,512,512);
+      for (let i = 0; i < 14; i++) { g.strokeStyle = `rgba(120,115,110,${.12 + r()*.25})`; g.lineWidth = .6 + r()*2; g.beginPath(); let x = r()*512, y = r()*512; g.moveTo(x, y);
+        for (let k = 0; k < 6; k++) { x += (r()-.3)*140; y += (r()-.5)*140; g.lineTo(x, y); } g.stroke(); }
+      g.strokeStyle = 'rgba(160,150,140,.35)'; g.lineWidth = 1; for (let i = 0; i <= 512; i += 256) { g.strokeRect(i, 0, 256, 512); g.strokeRect(0, i, 512, 256); } })},
+  micro: {name:'微水泥', t: tex(g => { const r = rnd(5); g.fillStyle = '#bfb8ae'; g.fillRect(0,0,512,512);
+      for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(${r()>.5?255:60},${r()>.5?250:55},${r()>.5?240:50},${r()*.08})`; g.fillRect(r()*512, r()*512, 2 + r()*10, 2 + r()*10); } })},
+  tile:  {name:'瓷砖', t: tex(g => { g.fillStyle = '#e6e1d9'; g.fillRect(0,0,512,512); g.strokeStyle = '#c9c1b5'; g.lineWidth = 3;
+      for (let i = 0; i <= 512; i += 128) { g.beginPath(); g.moveTo(i,0); g.lineTo(i,512); g.stroke(); g.beginPath(); g.moveTo(0,i); g.lineTo(512,i); g.stroke(); } })},
+};
+function floorMat(key, w, d) {
+  const t = MATS[key].t.clone(); t.needsUpdate = true; t.repeat.set(w/2, d/2);
+  return new THREE.MeshStandardMaterial({map:t, roughness: key === 'marble' ? .35 : .75, metalness:0});
+}
+
+// ---------------- 房间地面 ----------------
+const roomMeshes = [];
+function buildRooms() {
+  ROOMS.forEach(r => {
+    const w = r.x1 - r.x0, d = r.z1 - r.z0;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), floorMat(r.mat, w, d));
+    m.rotation.x = -Math.PI/2; m.position.copy(W(r.x0 + w/2, r.z0 + d/2, 0.002)); m.receiveShadow = true;
+    m.userData.room = r; r.mesh = m; scene.add(m); roomMeshes.push(m);
+    r.area = w * d;
+  });
+}
+function setRoomMat(r, key) { r.mat = key; const w = r.x1 - r.x0, d = r.z1 - r.z0; r.mesh.material.dispose(); r.mesh.material = floorMat(key, w, d); }
+
+// ---------------- 墙体 ----------------
+const wallMeshes = []; let wallH = FLAT_H;
+const TOP = {outer:'#3d342d', bear:'#3d342d', part:'#a39584', glass:'#9cc7e0'};
+function buildWalls() {
+  WALLS.forEach((w, i) => {
+    const [ax, az] = w.a, [bx, bz] = w.b, len = Math.hypot(bx-ax, bz-az);
+    const t = w.kind === 'outer' ? 0.24 : w.kind === 'bear' ? 0.2 : w.kind === 'glass' ? 0.08 : 0.12;
+    const ext = w.kind === 'glass' ? 0 : t;   // 端头稍微延长，接缝更干净
+    w.t = t; w.len = len;
+    let mesh;
+    if (w.kind === 'glass') {
+      mesh = new THREE.Group();
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(len, 1, t), new THREE.MeshStandardMaterial({color:'#bcd9e8', transparent:true, opacity:.28, roughness:.05, metalness:.2}));
+      mesh.add(glass); w.glass = glass;
+      const frameMat = new THREE.MeshStandardMaterial({color:'#5a4c40', roughness:.6});
+      w.posts = [];
+      for (let k = 0; k <= Math.round(len / 1.8); k++) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1, 0.1), frameMat); p.position.x = -len/2 + k * len / Math.round(len/1.8); p.castShadow = true; mesh.add(p); w.posts.push(p); }
+    } else {
+      const side = new THREE.MeshStandardMaterial({color:'#f5f0e8', roughness:.9});
+      const top = new THREE.MeshStandardMaterial({color:TOP[w.kind], roughness:.9});
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(len + ext, 1, t), [side, side, top, side, side, side]);
+      mesh.castShadow = true; mesh.receiveShadow = true; w.mats = [side, top];
+    }
+    mesh.position.copy(W((ax+bx)/2, (az+bz)/2)); mesh.rotation.y = -Math.atan2(bz-az, bx-ax);
+    mesh.userData.wall = w; w.mesh = mesh; scene.add(mesh); wallMeshes.push(mesh);
+    // 拆除后的虚线轮廓
+    const pts = [[-len/2,-t/2],[len/2,-t/2],[len/2,t/2],[-len/2,t/2],[-len/2,-t/2]].map(p => new THREE.Vector3(p[0], 0.03, p[1]));
+    const ghost = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({color:'#c0392b', dashSize:.12, gapSize:.08}));
+    ghost.computeLineDistances(); ghost.position.copy(mesh.position); ghost.rotation.y = mesh.rotation.y; ghost.visible = false; scene.add(ghost); w.ghost = ghost;
+  });
+  applyWallH();
+}
+function applyWallH() {
+  WALLS.forEach(w => {
+    const h = wallH;
+    if (w.kind === 'glass') { w.glass.scale.y = h; w.glass.position.y = h/2; w.posts.forEach(p => { p.scale.y = h; p.position.y = h/2; }); }
+    else { w.mesh.scale.y = h; w.mesh.position.y = h/2; }
+  });
+}
+function setRemoved(group, removed) {
+  WALLS.filter(w => w.group === group).forEach(w => { w.removed = removed; w.mesh.visible = !removed; w.ghost.visible = removed; });
+  const list = [...new Set(WALLS.filter(w => w.removed).map(w => w.group))];
+  document.getElementById('removed').innerHTML = list.length ? '已拆除：<br>' + list.map(g => '· ' + g).join('<br>') : '';
+}
+
+// ---------------- 天花板（只在漫游时显示） ----------------
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(PW, PD), new THREE.MeshStandardMaterial({color:'#fbf8f3', emissive:'#6d665d', roughness:1, side:THREE.DoubleSide}));
+ceiling.rotation.x = Math.PI/2; ceiling.position.copy(W(CX, CZ, WALL_H)); ceiling.visible = false; scene.add(ceiling);
+const lamp = new THREE.PointLight(0xfff0dc, 0.35, 14); lamp.position.copy(W(5, 7.5, 2.5)); scene.add(lamp);
+const lamp2 = new THREE.PointLight(0xfff0dc, 0.3, 14); lamp2.position.copy(W(14, 6, 2.5)); scene.add(lamp2);
+
+// ---------------- 门（2D 平面里的开门弧线） ----------------
+const doorLines = [];
+function buildDoors() {
+  const mat = new THREE.LineBasicMaterial({color:'#8a6d45'});
+  DOORS.forEach(d => {
+    const [hx, hz] = d.h, pts = [];
+    for (let k = 0; k <= 16; k++) { const a = k / 16 * Math.PI / 2; pts.push(W(hx + d.along * d.w * Math.cos(a), hz + d.swing * d.w * Math.sin(a), 0.02)); }
+    pts.push(W(hx, hz, 0.02)); pts.push(W(hx, hz + d.swing * d.w, 0.02));
+    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat); scene.add(l); doorLines.push(l);
+  });
+}
+
+// ---------------- 家具 ----------------
+const C = {fabric:'#ddd0bc', fabric2:'#c9b79c', walnut:'#6e4a30', oak:'#c9a77c', marble:'#efebe4', black:'#2b2622', brass:'#b8955a', green:'#6f8f5e', white:'#f7f4ee', rug:'#bfae93', grey:'#8d8780'};
+const mcache = {};
+const M = c => mcache[c] || (mcache[c] = new THREE.MeshStandardMaterial({color:c, roughness:.8}));
+function box(g, w, h, d, x, y, z, c) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M(c)); m.position.set(x, y + h/2, z); m.castShadow = m.receiveShadow = true; g.add(m); return m; }
+function cyl(g, r, h, x, y, z, c, seg = 24) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), M(c)); m.position.set(x, y + h/2, z); m.castShadow = m.receiveShadow = true; g.add(m); return m; }
+function chairAt(g, x, z, rot) { const c = new THREE.Group(); box(c, .46, .46, .46, 0, 0, 0, C.fabric2); box(c, .46, .42, .08, 0, .46, -.2, C.fabric2); c.position.set(x, 0, z); c.rotation.y = rot; g.add(c); }
+const FURN = {
+  sofa:    {name:'三人沙发', icon:'🛋', w:3.0, d:1.0, make(g){ box(g,3,.42,.95,0,0,0,C.fabric); box(g,3,.45,.2,0,.42,-.38,C.fabric); box(g,.2,.25,.95,-1.4,.42,0,C.fabric); box(g,.2,.25,.95,1.4,.42,0,C.fabric); for (let i=-1;i<=1;i++) box(g,.85,.12,.7,i*.88,.42,.05,C.white); }},
+  chair:   {name:'单人椅', icon:'💺', w:.85, d:.85, make(g){ box(g,.8,.4,.8,0,0,0,C.walnut); box(g,.7,.12,.65,0,.4,.05,C.fabric); box(g,.8,.45,.12,0,.4,-.34,C.walnut); }},
+  coffee:  {name:'茶几', icon:'◯', w:1.3, d:.75, make(g){ const t = cyl(g,.5,.06,0,.36,0,C.marble,40); t.scale.set(1.3,1,.75); const b = cyl(g,.25,.36,0,0,0,C.brass,20); b.scale.set(1.3,1,.75); }},
+  tv:      {name:'电视柜', icon:'📺', w:2.8, d:.45, make(g){ box(g,2.8,.45,.45,0,0,0,C.walnut); box(g,1.8,1.02,.05,0,.9,-.18,C.black); }},
+  rug:     {name:'地毯', icon:'▭', w:2.8, d:2.0, make(g){ const m = box(g,2.8,.012,2.0,0,0,0,C.rug); m.castShadow = false; }},
+  dining:  {name:'餐桌组', icon:'🍽', w:2.4, d:1.8, make(g){ box(g,2.2,.05,1.0,0,.72,0,C.oak); box(g,.12,.72,.8,-.8,0,0,C.walnut); box(g,.12,.72,.8,.8,0,0,C.walnut); [-.7,0,.7].forEach(x => { chairAt(g,x,-.75,0); chairAt(g,x,.75,Math.PI); }); }},
+  bed:     {name:'双人床', icon:'🛏', w:2.9, d:2.2, make(g){ box(g,1.9,.45,2.1,0,0,.05,C.fabric2); box(g,1.8,.18,1.95,0,.45,.1,C.white); box(g,2.0,1.1,.1,0,0,-1.03,C.walnut); box(g,1.8,.08,.8,0,.63,.55,C.fabric); [-1.2,1.2].forEach(x => { box(g,.45,.5,.4,x,0,-.8,C.walnut); cyl(g,.12,.3,x,.5,-.8,C.white); }); }},
+  bedS:    {name:'单人床', icon:'🛏', w:1.5, d:2.1, make(g){ box(g,1.4,.42,2.0,0,0,.05,C.fabric2); box(g,1.3,.16,1.85,0,.42,.1,C.white); box(g,1.5,.95,.08,0,0,-1.0,C.oak); }},
+  desk:    {name:'书桌', icon:'🖥', w:1.6, d:.9, make(g){ box(g,1.6,.04,.7,0,.72,-.1,C.oak); box(g,.05,.72,.65,-.75,0,-.1,C.walnut); box(g,.05,.72,.65,.75,0,-.1,C.walnut); chairAt(g,0,.3,Math.PI); }},
+  shelf:   {name:'书柜', icon:'📚', w:2.0, d:.4, make(g){ box(g,2.0,2.3,.4,0,0,0,C.walnut); for (let k=1;k<5;k++) box(g,1.9,.03,.02,0,k*.46,.2,C.oak); }},
+  wardrobe:{name:'衣柜', icon:'🚪', w:2.4, d:.6, make(g){ box(g,2.4,2.4,.6,0,0,0,C.oak); for (let k=-1;k<=1;k++) box(g,.02,2.3,.02,k*.8,.05,.3,C.walnut); }},
+  island:  {name:'岛台', icon:'▬', w:2.4, d:.9, make(g){ box(g,2.3,.88,.85,0,0,0,C.walnut); box(g,2.4,.04,.9,0,.88,0,C.marble); }},
+  counter: {name:'橱柜', icon:'🍳', w:3.2, d:.6, make(g){ box(g,3.2,.88,.6,0,0,0,C.white); box(g,3.2,.04,.62,0,.88,0,C.marble); box(g,3.2,.7,.35,0,1.6,-.12,C.white); }},
+  cabinet: {name:'玄关柜', icon:'🗄', w:2.0, d:.4, make(g){ box(g,2.0,2.2,.4,0,0,0,C.oak); box(g,1.2,.3,.02,0,1.0,.2,C.walnut); }},
+  vanity:  {name:'浴室柜', icon:'🚿', w:1.2, d:.5, make(g){ box(g,1.2,.8,.5,0,0,0,C.walnut); box(g,1.2,.04,.52,0,.8,0,C.marble); box(g,.9,.8,.03,0,1.1,-.23,'#cfd9df'); }},
+  plant:   {name:'绿植', icon:'🪴', w:.6, d:.6, make(g){ cyl(g,.22,.4,0,0,0,C.grey); const s = new THREE.Mesh(new THREE.SphereGeometry(.38,16,12), M(C.green)); s.position.y = .85; s.scale.y = 1.4; s.castShadow = true; g.add(s); }},
+};
+const LIB = ['sofa','chair','coffee','tv','rug','dining','bed','bedS','desk','shelf','wardrobe','island','plant'];
+const items = [];
+function addItem(type, x, z, rot = 0) {
+  const g = new THREE.Group(); FURN[type].make(g);
+  g.position.copy(W(x, z)); g.rotation.y = rot; g.userData.item = {type};
+  g.traverse(o => { if (o.isMesh) o.userData.owner = g; });
+  scene.add(g); items.push(g); return g;
+}
+function removeItem(g) { scene.remove(g); items.splice(items.indexOf(g), 1); }
+
+// ---------------- 标签和尺寸 ----------------
+const labels = [];
+function addLabel(html, pos, cls, only2d) { const el = document.createElement('div'); el.className = cls; el.innerHTML = html; labelsEl.appendChild(el); const l = {el, pos, only2d}; labels.push(l); return l; }
+const dimLines = [];
+function buildLabels() {
+  ROOMS.forEach(r => { const w = r.x1 - r.x0, d = r.z1 - r.z0; addLabel(`<b>${r.name}</b><small>${(w*d).toFixed(1)}㎡</small>`, W(r.x0 + w/2, r.z0 + d/2 + (r.id === 'living' ? -1.4 : r.id === 'dining' ? 1.3 : 0), 0.1), 'rl', false); });
+  const mat = new THREE.LineBasicMaterial({color:'#b0762a'});
+  const seg = (a, b) => { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), mat); scene.add(l); dimLines.push(l); };
+  const off = -0.9;
+  seg(W(0, off), W(PW, off)); seg(W(0, off-.2), W(0, off+.2)); seg(W(PW, off-.2), W(PW, off+.2));
+  seg(W(off, 0), W(off, PD)); seg(W(off-.2, 0), W(off+.2, 0)); seg(W(off-.2, PD), W(off+.2, PD));
+  addLabel(`${PW.toFixed(2)} m`, W(PW/2, off), 'dim', true); addLabel(`${PD.toFixed(2)} m`, W(off, PD/2), 'dim', true);
+  addLabel('<small style="color:#6b8fa6">南 · 落地窗</small>', W(PW/2, PD + 0.9), 'rl', true);
+  addLabel('<small style="color:#8a6d45">入户门</small>', W(12.25, -0.5), 'rl', true);
+}
+
+// ---------------- 相机视角 ----------------
+let view = '2d', tool = 'select', floorPick = null;
+function fit2d() {
+  const aspect = stage.clientWidth / stage.clientHeight, need = Math.max(PD + 3.6, (PW + 4.6) / aspect);
+  return need / 2 / Math.tan(THREE.MathUtils.degToRad(15));
+}
+const PRESET = {
+  '2d': () => ({pos: new THREE.Vector3(0, fit2d(), 0.001), tgt: new THREE.Vector3(0, 0, 0), h: FLAT_H, fov: 30}),
+  '3d': () => ({pos: new THREE.Vector3(-11, 17, 19), tgt: new THREE.Vector3(0.5, 0, 0.5), h: WALL_H, fov: 30}),
+  'walk': () => ({pos: W(7.4, 5.7, 1.6), tgt: W(1.5, 9.2, 1.25), h: WALL_H, fov: 62}),
+};
+let anim = null;
+const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+function goView(v) {
+  const from = {pos: camera.position.clone(), tgt: controls.target.clone(), h: wallH, fov: camera.fov};
+  if (view === 'walk') { from.tgt = camera.position.clone().add(new THREE.Vector3(-Math.sin(yaw), Math.sin(pitch), -Math.cos(yaw))); }
+  ceiling.visible = false;
+  const to = PRESET[v](); const prev = view; view = v;
+  document.querySelectorAll('.views button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  controls.enabled = false; walkActive = false; document.getElementById('walkui').style.display = 'none';
+  document.getElementById('legend').style.display = v === '2d' && getComputedStyle(document.querySelector('aside')).gridRow !== '3' ? 'block' : 'none';
+  select(null);
+  anim = {t0: performance.now(), dur: prev === v ? 400 : 1600, from, to, done() {
+    if (v === 'walk') { startWalk(); } else { controls.enabled = true; controls.enableRotate = v !== '2d'; }
+  }};
+  updateHint();
+}
+function stepAnim(now) {
+  if (!anim) return;
+  const k = Math.min(1, (now - anim.t0) / anim.dur), e = ease(k);
+  // 墙体：进 3D 时先长高，退回 2D 时后收起
+  const hk = anim.to.h > anim.from.h ? Math.min(1, k * 1.6) : Math.max(0, k * 1.6 - .6);
+  wallH = anim.from.h + (anim.to.h - anim.from.h) * ease(hk); applyWallH();
+  camera.position.lerpVectors(anim.from.pos, anim.to.pos, e);
+  controls.target.lerpVectors(anim.from.tgt, anim.to.tgt, e);
+  camera.fov = anim.from.fov + (anim.to.fov - anim.from.fov) * e; camera.updateProjectionMatrix();
+  camera.lookAt(controls.target);
+  if (k >= 1) { const a = anim; anim = null; a.done(); }
+}
+
+// ---------------- 漫游 ----------------
+let walkActive = false, yaw = 0, pitch = 0; const keys = {};
+function startWalk() {
+  walkActive = true; ceiling.visible = true; document.getElementById('walkui').style.display = 'block';
+  const dir = new THREE.Vector3().subVectors(controls.target, camera.position);
+  yaw = Math.atan2(-dir.x, -dir.z); pitch = Math.asin(dir.normalize().y);
+}
+function blocked(p) {
+  const x = p.x + CX, z = p.z + CZ;
+  if (x < 0.3 || x > PW - 0.3 || z < 0.3 || z > PD - 0.3) return true;
+  return WALLS.some(w => { if (w.removed) return false; const [ax, az] = w.a, [bx, bz] = w.b;
+    const vx = bx-ax, vz = bz-az, L = vx*vx + vz*vz, t = Math.max(0, Math.min(1, ((x-ax)*vx + (z-az)*vz) / L));
+    return Math.hypot(x - (ax + t*vx), z - (az + t*vz)) < w.t/2 + 0.25; });
+}
+function stepWalk(dt) {
+  if (!walkActive) return;
+  const f = (keys.f||keys.KeyW||keys.ArrowUp?1:0) - (keys.b||keys.KeyS||keys.ArrowDown?1:0);
+  const s = (keys.r||keys.KeyD||keys.ArrowRight?1:0) - (keys.l||keys.KeyA||keys.ArrowLeft?1:0);
+  if (f || s) {
+    const sp = 2.0 * dt, fw = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)), rt = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+    const move = fw.multiplyScalar(f * sp).add(rt.multiplyScalar(s * sp));
+    const nx = camera.position.clone(); nx.x += move.x; if (!blocked(nx)) camera.position.x = nx.x;
+    const nz = camera.position.clone(); nz.z += move.z; if (!blocked(nz)) camera.position.z = nz.z;
+  }
+  camera.rotation.order = 'YXZ'; camera.rotation.set(pitch, yaw, 0);
+}
+addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Escape' && view === 'walk') goView('3d'); });
+addEventListener('keyup', e => { keys[e.code] = false; });
+document.querySelectorAll('#pad button').forEach(b => {
+  const k = b.dataset.k;
+  b.addEventListener('pointerdown', e => { keys[k] = true; e.stopPropagation(); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev => b.addEventListener(ev, () => keys[k] = false));
+});
+document.getElementById('exitwalk').onclick = () => goView('3d');
+
+// ---------------- 交互：选择、拖动、拆墙、测量、换地面 ----------------
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), floorPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0);
+function setNdc(e) { const r = canvas.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera); }
+function floorPoint() { const p = new THREE.Vector3(); return ray.ray.intersectPlane(floorPlane, p) ? p : null; }
+let selected = null, selBox = null, drag = null, lookDrag = null, hoverWall = null;
+function select(g) {
+  selected = g; if (selBox) { scene.remove(selBox); selBox = null; }
+  const bar = document.getElementById('selbar');
+  if (g) { selBox = new THREE.BoxHelper(g, 0xb0762a); scene.add(selBox); document.getElementById('selname').textContent = FURN[g.userData.item.type].name; bar.style.display = 'flex'; }
+  else bar.style.display = 'none';
+}
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.opacity = 1; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.opacity = 0, 1800); }
+function highlightWall(w, on, bad) {
+  if (!w || !w.mats) return;
+  const c = on ? (bad ? 0x661100 : 0x6a3c00) : 0x000000;
+  WALLS.filter(x => (w.group && x.group === w.group) || x === w).forEach(x => x.mats && x.mats.forEach(m => m.emissive.setHex(c)));
+}
+const measures = []; let mStart = null, mTemp = null;
+function addMeasure(a, b) {
+  const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a.clone().setY(.06), b.clone().setY(.06)]), new THREE.LineBasicMaterial({color:'#c0392b'}));
+  scene.add(l); const lab = addLabel((a.distanceTo(b)).toFixed(2) + ' m', a.clone().add(b).multiplyScalar(.5).setY(.1), 'ml', false);
+  measures.push({l, lab});
+}
+stage.addEventListener('pointerdown', e => {
+  if (e.target !== canvas) return;
+  if (walkActive) { lookDrag = {x: e.clientX, y: e.clientY}; return; }
+  if (anim) return;
+  setNdc(e);
+  if (tool === 'select') {
+    const hit = ray.intersectObjects(items, true)[0];
+    if (hit) { const g = hit.object.userData.owner; select(g); const p = floorPoint(); drag = {g, off: g.position.clone().sub(p)}; controls.enabled = false; canvas.setPointerCapture(e.pointerId); }
+    else select(null);
+  } else if (tool === 'wall') {
+    const hit = ray.intersectObjects(wallMeshes.filter(m => m.visible), true)[0];
+    let w = hit && (hit.object.userData.wall || hit.object.parent.userData.wall);
+    if (!w) { // 已拆的墙：点虚线位置可以恢复
+      const p = floorPoint(); if (p) { const x = p.x + CX, z = p.z + CZ;
+        w = WALLS.find(q => { if (!q.removed) return false; const [ax, az] = q.a, [bx, bz] = q.b, vx = bx-ax, vz = bz-az, L = vx*vx+vz*vz, t = Math.max(0, Math.min(1, ((x-ax)*vx+(z-az)*vz)/L)); return Math.hypot(x-(ax+t*vx), z-(az+t*vz)) < .3; });
+        if (w) { setRemoved(w.group, false); toast('已恢复：' + w.group); return; } } }
+    if (w) {
+      if (w.kind !== 'part') toast(w.kind === 'glass' ? '外立面落地窗不能改动' : '这是承重墙，不能拆');
+      else { highlightWall(w, false); setRemoved(w.group, true); toast('已拆除：' + w.group + '（再点虚线可恢复）'); }
+      controls.enabled = false; setTimeout(() => controls.enabled = true, 0);
+    }
+  } else if (tool === 'measure') {
+    const p = floorPoint(); if (!p) return;
+    if (!mStart) { mStart = p; } else { addMeasure(mStart, p); mStart = null; if (mTemp) { scene.remove(mTemp); mTemp = null; } }
+    controls.enabled = false; setTimeout(() => controls.enabled = true, 0);
+  } else if (tool === 'floor') {
+    const hit = ray.intersectObjects(roomMeshes)[0];
+    if (hit) { const r = hit.object.userData.room; setRoomMat(r, floorPick); toast(`${r.name}：换成${MATS[floorPick].name}`); }
+    controls.enabled = false; setTimeout(() => controls.enabled = true, 0);
+  }
+}, true);
+stage.addEventListener('pointermove', e => {
+  if (lookDrag) { yaw -= (e.clientX - lookDrag.x) * .004; pitch = Math.max(-1.1, Math.min(1.1, pitch - (e.clientY - lookDrag.y) * .004)); lookDrag = {x: e.clientX, y: e.clientY}; return; }
+  setNdc(e);
+  if (drag) { const p = floorPoint(); if (p) { const n = p.add(drag.off); drag.g.position.x = Math.round(n.x * 20) / 20; drag.g.position.z = Math.round(n.z * 20) / 20; selBox.update(); } return; }
+  if (tool === 'wall' && !anim && !walkActive) {
+    const hit = ray.intersectObjects(wallMeshes.filter(m => m.visible), true)[0];
+    const w = hit && (hit.object.userData.wall || hit.object.parent.userData.wall);
+    if (w !== hoverWall) { highlightWall(hoverWall, false); hoverWall = w; highlightWall(w, true, w && w.kind !== 'part'); canvas.style.cursor = w ? 'pointer' : ''; }
+  }
+  if (tool === 'measure' && mStart) { const p = floorPoint(); if (p) { if (mTemp) scene.remove(mTemp);
+    mTemp = new THREE.Line(new THREE.BufferGeometry().setFromPoints([mStart.clone().setY(.06), p.setY(.06)]), new THREE.LineDashedMaterial({color:'#c0392b', dashSize:.15, gapSize:.1})); mTemp.computeLineDistances(); scene.add(mTemp); } }
+});
+addEventListener('pointerup', () => { lookDrag = null; if (drag) { drag = null; if (!walkActive) controls.enabled = true; } });
+
+document.getElementById('rot').onclick = () => { if (selected) { selected.rotation.y += Math.PI/2; selBox.update(); } };
+document.getElementById('del').onclick = () => { if (selected) { removeItem(selected); select(null); } };
+addEventListener('keydown', e => { if (!selected) return; if (e.code === 'KeyR') { selected.rotation.y += Math.PI/2; selBox.update(); } if (e.code === 'Delete' || e.code === 'Backspace') { removeItem(selected); select(null); } });
+
+// ---------------- 面板 ----------------
+const HINTS = {
+  select: '拖动家具摆放位置 · 选中后可以旋转、删除 · 滚轮缩放',
+  wall: '点非承重墙（浅色）可以拆掉 · 深色是承重墙 · 点红色虚线可以恢复',
+  measure: '在地面上点两下，量出两点之间的距离',
+  floor: '点任意房间，把地面换成选中的材质',
+  walk: '拖动画面转头 · 键盘 WASD 或方向键 / 左下角按钮走动 · Esc 退出',
+};
+function updateHint() { document.getElementById('hint').textContent = view === 'walk' ? HINTS.walk : (view === '3d' ? '拖动旋转视角 · 右键平移 · ' : '') + HINTS[tool]; }
+function setTool(t) {
+  tool = t; if (t !== 'floor') { floorPick = null; document.querySelectorAll('.mat').forEach(m => m.classList.remove('on')); }
+  document.querySelectorAll('.tools button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  highlightWall(hoverWall, false); hoverWall = null; canvas.style.cursor = ''; mStart = null; if (mTemp) { scene.remove(mTemp); mTemp = null; }
+  if (t !== 'select') select(null);
+  updateHint();
+}
+document.querySelectorAll('.tools button').forEach(b => b.onclick = () => { if (view === 'walk') goView('3d'); setTool(b.dataset.t); });
+document.querySelectorAll('.views button').forEach(b => b.onclick = () => goView(b.dataset.v));
+const lib = document.getElementById('lib');
+LIB.forEach(k => { const b = document.createElement('button'); b.innerHTML = `<i>${FURN[k].icon}</i>${FURN[k].name}`;
+  b.onclick = () => { if (view === 'walk') goView('3d'); setTool('select'); const t = controls.target;
+    const g = addItem(k, t.x + CX + (Math.random() - .5), t.z + CZ + (Math.random() - .5)); select(g); toast('已放入' + FURN[k].name + '，拖动到合适的位置'); };
+  lib.appendChild(b); });
+const mats = document.getElementById('mats');
+Object.entries(MATS).forEach(([k, m]) => { const d = document.createElement('div'); d.className = 'mat';
+  d.innerHTML = `<div style="background-image:url(${m.t.image.toDataURL()})"></div>${m.name}`;
+  d.onclick = () => { if (view === 'walk') goView('3d'); setTool('floor'); floorPick = k; document.querySelectorAll('.mat').forEach(x => x.classList.toggle('on', x === d)); };
+  mats.appendChild(d); });
+document.getElementById('clearm').onclick = () => { measures.forEach(m => { scene.remove(m.l); m.lab.el.remove(); labels.splice(labels.indexOf(m.lab), 1); }); measures.length = 0; };
+document.getElementById('reset').onclick = () => {
+  [...items].forEach(removeItem); START_FURN.forEach(f => addItem(...f)); select(null);
+  [...new Set(WALLS.filter(w => w.removed).map(w => w.group))].forEach(g => setRemoved(g, false));
+  const orig = {living:'oak', dining:'oak', bed2:'oak', study:'oak', kitchen:'tile', foyer:'marble', bath:'tile', closet:'oak', hall:'oak', master:'oak'};
+  ROOMS.forEach(r => setRoomMat(r, orig[r.id])); toast('已恢复原始户型');
+};
+document.getElementById('upload').onclick = () => toast('正式版：上传业主户型图，按尺寸还原成这样的在线户型');
+
+// ---------------- 启动 ----------------
+buildRooms(); buildWalls(); buildDoors(); buildLabels(); START_FURN.forEach(f => addItem(...f));
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); if (view === '2d' && !anim) { camera.position.set(0, fit2d(), 0.001); controls.target.set(0, 0, 0); } }
+addEventListener('resize', resize); resize();
+controls.enableRotate = false; camera.lookAt(0, 0, 0); updateHint();
+const tmp = new THREE.Vector3(); let last = performance.now();
+function loop(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  stepAnim(now);
+  if (walkActive) stepWalk(dt); else if (!anim && controls.enabled) controls.update();
+  const flat = wallH < 0.5, w = stage.clientWidth, h = stage.clientHeight;
+  doorLines.forEach(l => l.visible = flat); dimLines.forEach(l => l.visible = flat);
+  labels.forEach(l => {
+    tmp.copy(l.pos).project(camera);
+    const vis = tmp.z < 1 && !walkActive && (!l.only2d || flat);
+    l.el.style.display = vis ? 'block' : 'none';
+    if (vis) { l.el.style.left = ((tmp.x + 1) / 2 * w) + 'px'; l.el.style.top = ((1 - tmp.y) / 2 * h) + 'px'; l.el.style.opacity = flat ? 1 : .8; }
+  });
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

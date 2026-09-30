@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dulaiy 度拉家居 · 杭州精装大平层全案设计与改造</title>
+<meta name="description" content="度拉家居专注杭州精装大平层的全案设计与改造：硬装改造、全案设计、全屋定制、软装陈设，全案自有施工。">
+<style>
+:root{
+  --paper:#F5F1EA; --stone:#EAE3D8; --ink:#2A241F; --muted:#7B7065; --line:#DCD2C4;
+  --accent:#8A6A4B; --dark:#221D19;
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --latin:"Cormorant Garamond","Didot","Bodoni 72",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.wrap{width:min(1240px,90vw);margin:0 auto}
+.eyebrow{font-family:var(--latin);letter-spacing:.28em;text-transform:uppercase;font-size:13px;color:var(--accent)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:.04em}
+h2{font-size:clamp(28px,3.2vw,42px);line-height:1.35}
+.sec{padding:clamp(80px,11vw,150px) 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;margin-bottom:56px;flex-wrap:wrap}
+.sec-head p{max-width:440px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;border:1px solid var(--ink);border-radius:999px;font-size:15px;letter-spacing:.08em;transition:.3s;background:transparent}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.solid:hover{background:var(--accent);border-color:var(--accent)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 1s ease,transform 1s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* header */
+header{position:fixed;inset:0 0 auto 0;z-index:50;transition:.4s}
+header.solid{background:rgba(245,241,234,.94);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:78px}
+.logo{display:flex;align-items:baseline;gap:12px}
+.logo b{font-family:var(--latin);font-size:25px;letter-spacing:.32em;font-weight:500}
+.logo span{font-family:var(--serif);font-size:15px;letter-spacing:.2em;color:var(--muted)}
+.menu{display:flex;align-items:center;gap:40px;font-size:15px;letter-spacing:.1em}
+.menu a:not(.btn){position:relative}
+.menu a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:currentColor;transform:scaleX(0);transition:.3s}
+.menu a:not(.btn):hover::after{transform:scaleX(1)}
+.menu .btn{padding:9px 22px}
+.burger{display:none;background:none;border:0;width:40px;height:40px;position:relative}
+.burger i{position:absolute;left:8px;right:8px;height:1px;background:var(--ink);transition:.3s}
+.burger i:nth-child(1){top:15px}.burger i:nth-child(2){top:24px}
+body.open .burger i:nth-child(1){top:20px;transform:rotate(45deg)}
+body.open .burger i:nth-child(2){top:20px;transform:rotate(-45deg)}
+
+/* hero */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1.05fr;padding-top:78px}
+.hero-text{display:flex;flex-direction:column;justify-content:center;padding:6vh 6vw 6vh max(5vw,calc((100vw - 1240px)/2))}
+.hero h1{font-size:clamp(28px,3.3vw,52px);line-height:1.45;margin:26px 0 28px}
+.hero h1 span{display:block;white-space:nowrap}
+.hero-text>p{color:var(--muted);max-width:470px;font-size:17px}
+.hero-cta{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap}
+.hero-img{position:relative;overflow:hidden;background:var(--stone)}
+.hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1.8s ease,transform 7s ease}
+.hero-img img.on{opacity:1;transform:scale(1)}
+.hero-cap{position:absolute;left:28px;bottom:26px;color:#fff;font-size:13px;letter-spacing:.14em;text-shadow:0 1px 8px rgba(0,0,0,.35);z-index:2}
+.dots{position:absolute;right:28px;bottom:32px;display:flex;gap:10px;z-index:2}
+.dots i{width:26px;height:2px;background:rgba(255,255,255,.45);transition:.4s}
+.dots i.on{background:#fff}
+
+/* stats */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:44px 0 40px 32px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat b{display:block;font-family:var(--latin);font-weight:500;font-size:46px;line-height:1.1}
+.stat b small{font-size:20px;margin-left:4px;font-family:var(--serif)}
+.stat span{color:var(--muted);font-size:14px;letter-spacing:.1em}
+
+/* works */
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filters button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 20px;font-size:14px;letter-spacing:.08em;color:var(--muted);transition:.3s}
+.filters button.on,.filters button:hover{border-color:var(--ink);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 32px}
+.card{cursor:pointer}
+.card .ph{aspect-ratio:3/4;overflow:hidden;background:var(--stone)}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s ease}
+.card:hover img{transform:scale(1.045)}
+.card h3{font-size:21px;margin-top:20px;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 em{font-style:normal;font-family:var(--latin);font-size:18px;color:var(--muted)}
+.card p{color:var(--muted);font-size:14px;letter-spacing:.06em;margin-top:2px}
+.card.hide{display:none}
+.grid .card:nth-child(3n+2){margin-top:60px}
+.note{margin-top:60px;color:var(--muted);font-size:13px;letter-spacing:.06em}
+
+/* pano */
+.pano{position:relative;height:min(52vw,720px);overflow:hidden}
+.pano img{width:100%;height:100%;object-fit:cover}
+.pano .cap{position:absolute;left:0;right:0;bottom:0;padding:80px 0 34px;background:linear-gradient(transparent,rgba(20,16,12,.55));color:#fff}
+.pano .cap .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.pano .cap h3{font-size:clamp(22px,2.4vw,32px)}
+.pano .cap p{opacity:.85;font-size:14px;letter-spacing:.1em}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink)}
+.svc div{padding:34px 28px 40px 0;border-right:1px solid var(--line);margin-right:28px}
+.svc div:last-child{border-right:0;margin-right:0}
+.svc i{font-style:normal;font-family:var(--latin);color:var(--accent);font-size:15px;letter-spacing:.2em}
+.svc h3{font-size:24px;margin:18px 0 14px}
+.svc p{color:var(--muted);font-size:15px}
+.also{margin-top:48px;padding-top:26px;border-top:1px solid var(--line);color:var(--muted);font-size:15px;letter-spacing:.06em}
+.also b{color:var(--ink);font-weight:500;margin-right:14px}
+
+/* approach */
+.dark{background:var(--dark);color:#EDE6DB}
+.dark .eyebrow{color:#C3A47F}
+.approach{display:grid;grid-template-columns:5fr 6fr;gap:8vw;align-items:start}
+.approach .ph{aspect-ratio:4/5;overflow:hidden;position:sticky;top:110px}
+.approach .ph img{width:100%;height:100%;object-fit:cover}
+.points{margin-top:48px}
+.point{display:grid;grid-template-columns:64px 1fr;padding:30px 0;border-top:1px solid rgba(237,230,219,.16)}
+.point:last-child{border-bottom:1px solid rgba(237,230,219,.16)}
+.point b{font-family:var(--latin);font-weight:500;font-size:22px;color:#C3A47F}
+.point h3{font-size:22px;margin-bottom:8px}
+.point p{color:rgba(237,230,219,.68);font-size:15px}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;counter-reset:s}
+.step{background:#fff;padding:36px 30px 40px;border-radius:2px;position:relative}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--latin);font-size:56px;line-height:1;color:var(--stone);position:absolute;right:22px;top:20px}
+.step h3{font-size:22px;margin-bottom:6px;position:relative}
+.step small{color:var(--accent);letter-spacing:.16em;font-size:12px;font-family:var(--latin);text-transform:uppercase}
+.step ul{list-style:none;margin-top:22px;font-size:15px;color:var(--muted)}
+.step li{padding:7px 0;border-top:1px solid var(--stone)}
+
+/* estates */
+.estates{display:flex;flex-wrap:wrap;gap:14px 34px;font-family:var(--serif);font-size:clamp(17px,1.6vw,21px);color:var(--muted);line-height:1.6}
+.estates span{transition:.3s}
+.estates span:hover{color:var(--ink)}
+.estates span.hl{color:var(--ink)}
+
+/* founder */
+.founder{display:grid;grid-template-columns:1fr 1fr;gap:8vw;align-items:center}
+.founder blockquote{font-family:var(--serif);font-size:clamp(22px,2.3vw,30px);line-height:1.7;position:relative;padding-top:40px}
+.founder blockquote::before{content:"“";font-family:var(--latin);font-size:120px;line-height:1;position:absolute;top:-30px;left:-8px;color:var(--line)}
+.founder .who{margin-top:30px;color:var(--muted);letter-spacing:.1em}
+.founder .who b{color:var(--ink);font-weight:500;font-family:var(--serif);font-size:19px;margin-right:12px}
+.founder .ph{aspect-ratio:1/1;overflow:hidden}
+.founder .ph img{width:100%;height:100%;object-fit:cover}
+
+/* contact */
+.contact{display:grid;grid-template-columns:1fr 1.15fr;gap:8vw}
+.contact dl{margin-top:40px}
+.contact dt{font-size:13px;color:var(--muted);letter-spacing:.14em;margin-top:22px}
+.contact dd{font-family:var(--serif);font-size:19px}
+.contact dd a{border-bottom:1px solid var(--line)}
+.todo{color:#B08A5E;font-family:var(--sans);font-size:14px}
+form{background:#fff;padding:44px 44px 40px}
+form h3{font-size:24px;margin-bottom:6px}
+form>p{color:var(--muted);font-size:14px;margin-bottom:26px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:block;margin-bottom:18px;font-size:13px;color:var(--muted);letter-spacing:.08em}
+input,select,textarea{display:block;width:100%;margin-top:6px;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:transparent;font:inherit;font-size:16px;color:var(--ink);outline:none;transition:.3s;border-radius:0}
+input:focus,select:focus,textarea:focus{border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 26px}
+.chips label{margin:0}
+.chips input{display:none}
+.chips span{display:inline-block;padding:7px 18px;border:1px solid var(--line);border-radius:999px;font-size:14px;color:var(--muted);cursor:pointer;transition:.25s}
+.chips input:checked+span{border-color:var(--ink);color:var(--ink);background:var(--paper)}
+form .btn{width:100%;justify-content:center;margin-top:8px}
+.ok{display:none;text-align:center;padding:60px 0}
+.ok h3{margin-bottom:10px}
+form.done .fields{display:none}
+form.done .ok{display:block}
+
+footer{border-top:1px solid var(--line);padding:40px 0 50px;color:var(--muted);font-size:13px;letter-spacing:.06em}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(24,20,16,.96);display:none;color:#EDE6DB}
+.modal.on{display:grid;grid-template-columns:1fr 380px}
+.m-stage{position:relative;display:flex;align-items:center;justify-content:center;padding:60px 70px;min-height:0}
+.m-stage img{max-width:100%;max-height:calc(100vh - 120px);object-fit:contain;transition:opacity .35s}
+.m-arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(237,230,219,.3);background:transparent;color:#EDE6DB;font-size:20px}
+.m-arrow:hover{background:rgba(237,230,219,.1)}
+.m-prev{left:14px}.m-next{right:14px}
+.m-count{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-family:var(--latin);letter-spacing:.2em;font-size:14px;opacity:.7}
+.m-side{background:#1B1714;padding:70px 40px 40px;overflow:auto}
+.m-side h3{font-size:30px;margin:12px 0 26px}
+.m-side table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:28px}
+.m-side td{padding:10px 0;border-bottom:1px solid rgba(237,230,219,.12)}
+.m-side td:first-child{color:rgba(237,230,219,.5);width:84px}
+.m-side p{color:rgba(237,230,219,.75);font-size:15px;line-height:1.9;white-space:pre-line}
+.m-side small{display:block;margin-top:28px;color:rgba(237,230,219,.4);font-size:12px}
+.m-side .btn{border-color:rgba(237,230,219,.5);color:#EDE6DB;margin-top:30px}
+.m-side .btn:hover{background:#EDE6DB;color:var(--ink)}
+.m-close{position:absolute;top:18px;right:22px;z-index:3;background:none;border:0;color:#EDE6DB;font-size:34px;line-height:1;width:44px;height:44px}
+
+@media (max-width:980px){
+  .menu{position:fixed;inset:78px 0 auto 0;background:var(--paper);flex-direction:column;gap:0;padding:10px 5vw 30px;transform:translateY(-130%);transition:.4s;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+  body.open .menu{transform:none}
+  .menu a:not(.btn){padding:16px 0;width:100%;border-bottom:1px solid var(--line)}
+  .menu .btn{margin-top:22px}
+  .burger{display:block}
+  header:not(.solid) .menu{background:var(--paper)}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-img{height:62vh;order:-1}
+  .hero-text{padding:48px 5vw 60px}
+  .stats .wrap{grid-template-columns:1fr 1fr}
+  .stat{padding:28px 0 26px 20px}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .grid{grid-template-columns:1fr 1fr;gap:36px 18px}
+  .grid .card:nth-child(3n+2){margin-top:0}
+  .grid .card:nth-child(even){margin-top:50px}
+  .svc{grid-template-columns:1fr 1fr}
+  .svc div{margin-right:0;padding-right:20px;border-right:0;border-bottom:1px solid var(--line)}
+  .approach,.founder,.contact{grid-template-columns:1fr}
+  .approach .ph{position:relative;top:0;aspect-ratio:16/11}
+  .steps{grid-template-columns:1fr 1fr}
+  .modal.on{grid-template-columns:1fr;grid-template-rows:62vh auto;overflow:auto}
+  .m-stage{padding:50px 10px 40px}
+  .m-stage img{max-height:calc(62vh - 90px)}
+  .m-side{padding:30px 6vw 50px}
+}
+@media (max-width:600px){
+  body{font-size:15px}
+  .logo span{display:none}
+  .grid{grid-template-columns:1fr}
+  .grid .card:nth-child(even){margin-top:0}
+  .svc,.steps,.row{grid-template-columns:1fr}
+  form{padding:32px 22px}
+  .m-arrow{width:40px;height:40px;font-size:16px}
+  .pano{height:64vw}
+}
+</style>
+</head>
+<body>
+
+<header id="hd">
+  <div class="wrap nav">
+    <a href="#top" class="logo"><b>DULAIY</b><span>度拉家居</span></a>
+    <nav class="menu" id="menu">
+      <a href="#works">作品</a>
+      <a href="#services">服务</a>
+      <a href="#approach">做法</a>
+      <a href="#process">流程</a>
+      <a href="#about">关于</a>
+      <a href="#contact" class="btn">预约设计</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="菜单"><i></i><i></i></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-text">
+    <div class="eyebrow">Hangzhou · Interior Renovation</div>
+    <h1><span>精装房到手之后，</span><span>把它改成你自己的家</span></h1>
+    <p>度拉家居专注杭州精装大平层的全案设计与改造。从平面布局、木作深化到软装进场，设计和施工由同一个团队完成。</p>
+    <div class="hero-cta">
+      <a href="#works" class="btn solid">看作品</a>
+      <a href="#contact" class="btn">预约设计沟通</a>
+    </div>
+  </div>
+  <div class="hero-img" id="heroImg">
+    <img src="img/hesong-1.jpg" alt="河颂映象府 客餐厅" data-cap="河颂映象府 · 199㎡" class="on">
+    <img src="img/zhilan-1.jpg" alt="芝澜月华轩 客厅" data-cap="芝澜月华轩 · 200㎡">
+    <img src="img/tangqian-1.jpg" alt="棠前嘉悦府 客厅" data-cap="棠前嘉悦府 · 236㎡">
+    <div class="hero-cap" id="heroCap">河颂映象府 · 199㎡</div>
+    <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="wrap">
+    <div class="stat reveal"><b>13<small>年</small></b><span>团队家装经验</span></div>
+    <div class="stat reveal"><b>5000<small>㎡</small></b><span>杭州独立家居展厅</span></div>
+    <div class="stat reveal"><b>50<small>+</small></b><span>服务过的杭州楼盘</span></div>
+    <div class="stat reveal"><b>全案</b><span>自有施工团队</span></div>
+  </div>
+</section>
+
+<section class="sec" id="works">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Selected Works</div>
+        <h2>近期作品</h2>
+      </div>
+      <div class="filters" id="filters">
+        <button class="on" data-f="all">全部</button>
+        <button data-f="意式轻奢">意式轻奢</button>
+        <button data-f="现代静谧">现代静谧</button>
+        <button data-f="中古">中古</button>
+        <button data-f="轻法式">轻法式</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="note">作品图片均为度拉家居的设计方案效果图，点开可看项目详情。</p>
+  </div>
+</section>
+
+<section class="pano">
+  <img src="img/pano-b.jpg" alt="潮语鸣翠轩 大横厅全景">
+  <div class="cap"><div class="wrap">
+    <div><div class="eyebrow" style="color:#E4CFB3">Chaoyu Mingcui · 241㎡</div><h3>大横厅 + 中西厨 + 休闲区，一条视线看到底</h3></div>
+    <p>潮语鸣翠轩 · 精装房改造</p>
+  </div></div>
+</section>
+
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Services</div>
+        <h2>我们做什么</h2>
+      </div>
+      <p>精装交付的房子，结构和水电大多已经做好。我们做的是在这个基础上重新规划，让格局、材质和收纳真正贴合一家人的生活。</p>
+    </div>
+    <div class="svc reveal">
+      <div><i>01</i><h3>精装房改造</h3><p>在精装交付的基础上局部拆改：墙面、顶面、地面、门和柜体，保留能用的，改掉不合适的。</p></div>
+      <div><i>02</i><h3>全案设计</h3><p>平面布局、效果图、选材和完整的预算报价清单，硬装软装一起考虑，开工前全部定下来。</p></div>
+      <div><i>03</i><h3>全屋定制与家具</h3><p>木作和柜体按现场尺寸定制，进口家具和板材可以代为采购。</p></div>
+      <div><i>04</i><h3>软装陈设</h3><p>家具、灯具、窗帘、地毯和艺术品统一搭配，整体进场落地。</p></div>
+    </div>
+    <p class="also reveal"><b>同时承接</b>房企地产样板间 · 私宅高定 · 品牌酒店 · 庭院景观</p>
+  </div>
+</section>
+
+<section class="sec dark" id="approach">
+  <div class="wrap approach">
+    <div class="ph reveal"><img src="img/ifc-1.jpg" alt="IFC 国际金融中心 客厅"></div>
+    <div>
+      <div class="eyebrow reveal">Our Approach</div>
+      <h2 class="reveal">把一套房子改好，<br>靠的是细节有人盯</h2>
+      <div class="points">
+        <div class="point reveal"><b>01</b><div><h3>专做精装大平层</h3><p>我们的项目大多是杭州 150 到 365㎡ 的精装大平层。熟悉这些楼盘的户型和交付标准，知道哪里值得改、哪里应该留。</p></div></div>
+        <div class="point reveal"><b>02</b><div><h3>设计和施工是同一个团队</h3><p>全案自有施工。设计师跟到现场，关键节点向业主报备，不会出现"图纸是一回事，做出来是另一回事"。</p></div></div>
+        <div class="point reveal"><b>03</b><div><h3>木作先放样，再进场</h3><p>柜体和木饰面在进场前做内部细节深化和现场放样，尺寸、分格和收口先对准，避免返工。</p></div></div>
+        <div class="point reveal"><b>04</b><div><h3>材料在展厅里看得到</h3><p>5000㎡ 独立家居展厅里，石材、木饰面、家具和灯具都能实地看、摸、比，选材不只看照片。</p></div></div>
+        <div class="point reveal"><b>05</b><div><h3>主理人亲自进厂盯货</h3><p>定制家具和柜体生产时，主理人会到工厂查看进度和做工，替业主把好出厂这一关。</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="process">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Process</div>
+        <h2>全案服务流程</h2>
+      </div>
+      <p>从第一次沟通到拍摄完工照片，一共四个阶段。每个阶段做完、确认过，再进入下一步。</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><small>Consult</small><h3>沟通</h3><ul><li>线上预约</li><li>初步意向沟通</li><li>收集需求</li><li>签订设计定金</li></ul></div>
+      <div class="step reveal"><small>Design</small><h3>设计</h3><ul><li>平面布局规划</li><li>效果图制作与细节沟通</li><li>完整预算报价清单</li><li>签订全案合同</li><li>木作、软装细节深化与选材</li></ul></div>
+      <div class="step reveal"><small>Build</small><h3>施工</h3><ul><li>开工仪式</li><li>关键节点报备</li><li>全流程施工跟踪</li><li>局部改造、木作、软装依次进场</li></ul></div>
+      <div class="step reveal"><small>Deliver</small><h3>完工</h3><ul><li>现场验收</li><li>拍摄完工照片</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="background:var(--stone)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Projects in Hangzhou</div>
+        <h2>我们服务过的楼盘</h2>
+      </div>
+      <p>如果你家也在这些小区，我们很可能已经做过同户型，可以直接聊哪些地方值得改。</p>
+    </div>
+    <div class="estates reveal" id="estates"></div>
+  </div>
+</section>
+
+<section class="sec" id="about">
+  <div class="wrap founder">
+    <div class="reveal">
+      <div class="eyebrow">About Dulaiy</div>
+      <h2 style="margin-bottom:26px">关于度拉</h2>
+      <p style="color:var(--muted);margin-bottom:36px">度拉家居是一家专注精装大平层和私宅全案设计落地的公司，团队在家装领域做了十三年，业务覆盖浙江。我们提供从设计、施工到定制和软装的一站式服务，在杭州有一座 5000㎡ 的独立家居展厅。</p>
+      <blockquote>好的家不需要堆砌。材质选对，光线做好，每样东西放在它该在的位置，住得越久越耐看。</blockquote>
+      <div class="who"><b>李淑娟</b>度拉家居主理人 · 杭州 5000㎡ 独立家居展厅主理人</div>
+    </div>
+    <div class="ph reveal"><img src="img/yucheng-1.jpg" alt="宇城丽澜轩 客厅"></div>
+  </div>
+</section>
+
+<section class="sec" id="contact" style="padding-top:0">
+  <div class="wrap contact">
+    <div class="reveal">
+      <div class="eyebrow">Contact</div>
+      <h2>聊聊你的房子</h2>
+      <p style="color:var(--muted);margin-top:20px;max-width:420px">告诉我们小区和面积，设计师会先看户型，再和你约时间沟通。也欢迎直接到展厅来看材料和样品。</p>
+      <dl>
+        <dt>展厅</dt><dd>杭州 · 5000㎡ 独立家居展厅 <span class="todo">（详细地址待补充）</span></dd>
+        <dt>电话 / 微信</dt><dd><span class="todo">待补充</span></dd>
+        <dt>小红书</dt>
+        <dd><a href="https://www.xiaohongshu.com/user/profile/62ec1f7a000000001f0052ca" target="_blank" rel="noopener">@度拉家居</a> · <a href="https://www.xiaohongshu.com/user/profile/6548a5ec000000000d004318" target="_blank" rel="noopener">@Dulaiy度拉家居</a></dd>
+      </dl>
+    </div>
+    <form id="form" class="reveal">
+      <div class="fields">
+        <h3>预约设计沟通</h3>
+        <p>留下联系方式，我们会在一个工作日内联系你。</p>
+        <div class="row">
+          <label>怎么称呼<input name="name" required placeholder="如：王女士"></label>
+          <label>手机号<input name="phone" required type="tel" pattern="1[0-9]{10}" placeholder="11 位手机号"></label>
+        </div>
+        <div class="row">
+          <label>小区 / 楼盘<input name="estate" placeholder="如：江月望云"></label>
+          <label>面积<select name="area"><option value="">请选择</option><option>150㎡ 以下</option><option>150–200㎡</option><option>200–300㎡</option><option>300㎡ 以上</option><option>别墅</option></select></label>
+        </div>
+        <label style="margin-bottom:0">想做什么（可多选）</label>
+        <div class="chips">
+          <label><input type="checkbox" name="need" value="全案设计"><span>全案设计</span></label>
+          <label><input type="checkbox" name="need" value="精装房改造"><span>精装房改造</span></label>
+          <label><input type="checkbox" name="need" value="全屋定制"><span>全屋定制</span></label>
+          <label><input type="checkbox" name="need" value="软装陈设"><span>软装陈设</span></label>
+        </div>
+        <button class="btn solid" type="submit">提交预约</button>
+      </div>
+      <div class="ok"><h3>已收到，谢谢</h3><p style="color:var(--muted)">设计师会尽快和你联系。</p></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© Dulaiy 度拉家居 · 杭州</span>
+    <span>网站作品图片为设计方案效果图</span>
+  </div>
+</footer>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <button class="m-close" id="mClose" aria-label="关闭">×</button>
+  <div class="m-stage">
+    <button class="m-arrow m-prev" id="mPrev" aria-label="上一张">←</button>
+    <img id="mImg" alt="">
+    <button class="m-arrow m-next" id="mNext" aria-label="下一张">→</button>
+    <div class="m-count" id="mCount"></div>
+  </div>
+  <aside class="m-side">
+    <div class="eyebrow" id="mEn"></div>
+    <h3 id="mTitle"></h3>
+    <table id="mMeta"></table>
+    <p id="mDesc"></p>
+    <a href="#contact" class="btn" id="mCta">咨询同款设计</a>
+    <small>图片为设计方案效果图</small>
+  </aside>
+</div>
+
+<script>
+const CASES=[
+ {s:'chaoyu',n:5,name:'潮语鸣翠轩',en:'Chaoyu Mingcui',area:241,style:'意式轻奢',
+  d:'木饰面和天然石材搭在一起，温润里带点力量感。客餐厅一体的大横厅，把城市天际线框进落地窗。\n材料以天然石材、树瘤木皮和柔和的皮质为主，圆弧家具弱化空间棱角，暖调灯带铺出氛围。大横厅、中西厨和休闲区连成一片，既有大宅的仪式感，也有日常的松弛。'},
+ {s:'tangqian',n:3,name:'棠前嘉悦府',en:'Tangqian Jiayue',area:236,style:'意式轻奢',
+  d:'简约克制的意式轻奢，不堆砌华丽，只留耐看的质感。\n整块玉石质感的电视背景墙，内嵌线性壁炉；无主灯的灯带层层递进。翡翠绿异形茶几配肌理布艺沙发，柔和的大地色中和了石材的冷硬。'},
+ {s:'zhilan',n:3,name:'芝澜月华轩',en:'Zhilan Yuehua',area:200,style:'现代静谧',
+  d:'200㎡ 精装局部改造的全案项目，以极简意式为基调，想做一个能让人静下来的家。\n空间干净克制，材质和光线承担大部分表达，既有设计质感，也保留生活的温度。'},
+ {s:'anzhi',n:2,name:'岸芷丁香',en:'Anzhi Dingxiang',area:159,style:'轻法式',
+  d:'整块宝格丽大理石做电视背景墙，配仿真壁炉，阳光进来时纹理在光影里慢慢展开。\n弧形沙发和花瓣茶几弱化棱角，石膏线条护墙板、复古壁灯和垂坠的布艺窗帘，把精致感放在细节里。'},
+ {s:'ifc',n:3,name:'IFC 国际金融中心',en:'Hangzhou IFC',area:209,style:'现代静谧',
+  d:'宝格丽大理石电视墙和温润木饰面拼接，冷调石材中和木色，刚柔平衡。地面大尺寸深灰大理石通铺，光影下通透有光泽。\n客餐厅一体、无边界布局，全景落地窗引入满室自然光；皮质模块沙发、大理石餐桌，开放式水吧酒柜兼顾会客和日常小酌。'},
+ {s:'hesong',n:3,name:'河颂映象府',en:'Hesong Yingxiang',area:199,style:'意式轻奢',
+  d:'偏爱低饱和的暖调，不要冰冷的土豪风。柔光大理石通铺地面，暗藏线性灯带，自然光和氛围灯两层光影，家里一直是柔和明亮的。\n客餐厨通透开放，待客、聚餐、独处都自在；红棕单人椅作为跳色，艺术雕塑、肌理花瓶和定制花艺一点点补足精致感。'},
+ {s:'yucheng',n:3,name:'宇城丽澜轩',en:'Yucheng Lilan',area:175,style:'中古',
+  d:'不是一眼惊艳的网红款，是越住越耐看的生活质感。\n胡桃木压得住场，深蓝沙发像一块安静的海，大理石纹壁炉把层次拉开。客餐厅打通后光线一路铺进来。餐厅吊灯的弧度、边几的大理石台面、壁灯打在木饰面上的光影，每样东西都在自己的位置上。'},
+ {s:'dieying',n:3,name:'叠映里',en:'Dieying',area:167,style:'中古',
+  d:'原木加微水泥的中古风。全屋统一柔和的弧形吊顶，光线在空间里漫反射。\n客餐厅打通成大横厅，超大落地窗配纱帘；深棕真皮沙发和胡桃木家具中和大理石地砖的冷硬，整墙木作收纳柜把杂物都收起来。'},
+ {s:'wenyue',n:3,name:'文樾上院',en:'Wenyue Shangyuan',area:180,style:'轻法式',
+  d:'去掉繁杂的雕花，用奶油白护墙板和柔和的圆弧线条做轻法式。\n客餐厅通透，卧室收纳充足，温柔但不浮夸。'},
+ {s:'yunhu',n:3,name:'云湖之城',en:'Yunhu City',area:199,style:'意式轻奢',
+  d:'入户玄关用翡翠绿大理石背景墙配艺术端景台，进门第一眼就有仪式感。\n客餐厅一体的大横厅通透开阔，豹纹艺术沙发、异形茶几和绿色奢石岛台，软装大胆但整体和谐。'},
+ {s:'langyun',n:3,name:'建发朗云',en:'Jianfa Langyun',area:232,style:'轻法式',
+  d:'奶咖色打底的轻法式，搭配浅色大理石和暖调灯光，温柔和贵气刚好平衡。\n餐厅的石膏花盘吊顶配玻璃吊灯，是整个家最有氛围的一角。'},
+ {s:'fengting',n:2,name:'枫汀云邸',en:'Fengting Yundi',area:235,style:'现代静谧',
+  d:'沉稳木色的现代大平层。客厅整面木饰面背景墙线条干净，模块布艺沙发配天然大理石茶几；电视墙融合奢石、悬浮柜体和木作，无主灯双层吊顶的灯带烘托氛围。\n餐厅圆形大理石餐桌适合大家庭，侧边一体式餐边柜，封闭柜加开放酒格，收纳和展示兼顾。'},
+];
+const ESTATES='潮语鸣翠轩 棠前嘉悦府 芝澜月华轩 岸芷丁香 IFC国际金融中心 河颂映象府 宇城丽澜轩 叠映里 文樾上院 云湖之城 建发朗云 枫汀云邸 霞映锦绣里 枫揽华庭 紫映云来府 沁百合 江月望云 芳翠锦绣府 揽潮华庭 兴耀望阙轩 杭州壹号院 江河鸣翠 星潮映像府 观品名寓 江明月朗园 丹枫四季 棠前嘉座 馥香园 清莱嘉座 建发缦云 天澜海岸 馥源庭 揽月轩 揽云锦绣里 建发望云 珹上润府 潮映万象轩 滨康天耀城 中海望庐 月咏新辰轩 汀岸辰风里 枫翠云轩 枫宜晓庐 咏溪云庐 潮观平澜府 枫秀云庭 玉润钱潮府 江河汇 海潮望月城 滨萃悦府 金茂府'.split(' ');
+
+// works grid
+const grid=document.getElementById('grid');
+grid.innerHTML=CASES.map((c,i)=>`<article class="card reveal" data-i="${i}" data-style="${c.style}">
+  <div class="ph"><img loading="lazy" src="img/${c.s}-cover.jpg" alt="${c.name}"></div>
+  <h3>${c.name}<em>${c.area}㎡</em></h3><p>精装房改造 · ${c.style}</p></article>`).join('');
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#filters button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('hide',b.dataset.f!=='all'&&c.dataset.style!==b.dataset.f));
+});
+const featured=new Set(CASES.map(c=>c.name.replace(/\s/g,'')));
+document.getElementById('estates').innerHTML=ESTATES.map(e=>`<span class="${featured.has(e)?'hl':''}">${e}</span>`).join('');
+
+// modal
+const M={el:document.getElementById('modal'),img:document.getElementById('mImg'),c:null,k:0};
+function show(){const c=M.c;M.img.style.opacity=0;const src=`img/${c.s}-${M.k+1}.jpg`;const t=new Image();t.onload=()=>{M.img.src=src;M.img.style.opacity=1};t.src=src;
+  document.getElementById('mCount').textContent=`${M.k+1} / ${c.n}`;}
+function open(i){const c=CASES[i];M.c=c;M.k=0;
+  document.getElementById('mEn').textContent=c.en;
+  document.getElementById('mTitle').textContent=c.name;
+  document.getElementById('mMeta').innerHTML=`<tr><td>项目地址</td><td>杭州 · ${c.name}</td></tr><tr><td>项目面积</td><td>${c.area}㎡</td></tr><tr><td>项目类型</td><td>精装房改造</td></tr><tr><td>风格</td><td>${c.style}</td></tr><tr><td>设计 / 施工</td><td>度拉家居全案设计 · 全案自有施工</td></tr>`;
+  document.getElementById('mDesc').textContent=c.d;
+  M.el.classList.add('on');document.body.style.overflow='hidden';show();}
+function close(){M.el.classList.remove('on');document.body.style.overflow='';}
+function step(d){if(!M.c)return;M.k=(M.k+d+M.c.n)%M.c.n;show();}
+grid.addEventListener('click',e=>{const c=e.target.closest('.card');if(c)open(+c.dataset.i)});
+document.getElementById('mClose').onclick=close;
+document.getElementById('mPrev').onclick=()=>step(-1);
+document.getElementById('mNext').onclick=()=>step(1);
+document.getElementById('mCta').onclick=close;
+addEventListener('keydown',e=>{if(!M.el.classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1);});
+let sx=null;M.el.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+M.el.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)step(dx<0?1:-1);sx=null;});
+
+// hero slideshow
+const hs=[...document.querySelectorAll('#heroImg img')],dots=[...document.querySelectorAll('#dots i')];let hk=0;
+setInterval(()=>{hs[hk].classList.remove('on');dots[hk].classList.remove('on');hk=(hk+1)%hs.length;hs[hk].classList.add('on');dots[hk].classList.add('on');document.getElementById('heroCap').textContent=hs[hk].dataset.cap;},5500);
+
+// header + menu
+const hd=document.getElementById('hd');
+const onScroll=()=>hd.classList.toggle('solid',scrollY>40);onScroll();addEventListener('scroll',onScroll,{passive:true});
+document.getElementById('burger').onclick=()=>document.body.classList.toggle('open');
+document.getElementById('menu').addEventListener('click',e=>{if(e.target.tagName==='A')document.body.classList.remove('open')});
+
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// form (演示版：未接后台)
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();e.target.classList.add('done');});
+</script>
+</body>
+</html>
